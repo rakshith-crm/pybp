@@ -39,12 +39,12 @@ class Handle:
             return
 
         compute_core = ceil(self.size / self.cores)
-        print(compute_core)
+        print(f'Using {self.cores}/{os.cpu_count()} cores, compute per core {compute_core}')
         batches = [[arg[i * compute_core: (i + 1) * compute_core] for arg in args] for i in range(0, self.cores)]
         jobs = spawn_jobs(function, batches)
         self.timer = time.time()
         duaration = time_this(self.launch_jobs, jobs)
-        print('Completed in', duaration)
+        print('\nCompleted in', duaration)
         
 
     
@@ -53,11 +53,10 @@ class Handle:
             jobs[i].start()
             self.job_ids.append(jobs[i].pid)
             self.monitors.append(0)
-        print('All Job ids:', self.job_ids)
         monitor_process = None
         if self.verbose != 0:
             monitor_process = Process(target=monitor_jobs, args=(self.monitors, self.verbose, self.refresh, self.timer))
-            print('Starting Monitor')
+            print('\n-----------\n| Monitor |\n-----------')
             monitor_process.start()
 
         for job in jobs:

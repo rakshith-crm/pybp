@@ -5,7 +5,7 @@ from math import ceil
 
 box_size = 13
 box = lambda value: '| Proc-%-4s |' % (value,)
-lines = lambda size: '-' * size 
+lines = lambda size: '=' * size 
 
 def convert(seconds):
     seconds = seconds % (24 * 3600)
@@ -36,3 +36,8 @@ def tabular_display(values, columns):
     print()
     print(lines( (len(values) % columns)  * box_size))
 
+def expected_completion_time(monitor, elapsed):
+    mean_completion_percent = sum(monitor) // len(monitor)
+    if mean_completion_percent == 0:
+        return convert(0)
+    return convert((100 - mean_completion_percent) * elapsed / mean_completion_percent)

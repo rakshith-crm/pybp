@@ -1,13 +1,13 @@
 import os
-
 import numpy as np
 from math import ceil
-from .jobs import *
 from multiprocessing import Manager, Lock
 
+from .jobs import *
+from .utility import *
 
 class Handle:
-    def __init__(self, cores, verbose):
+    def __init__(self, cores, verbose, refresh=2):
         self.manager = Manager()
         self.size = None
         self.cores = cores
@@ -15,14 +15,15 @@ class Handle:
         self.job_ids = self.manager.list()
         self.monitors = self.manager.list()
         self.main_lock = Lock()
+        self.refresh = refresh
+        self.timer = None
 
     def monitor(self, range_values):
         unique_key = self.job_ids.index(os.getpid())
-        print('unique key is', self.job_ids.index(os.getpid()))
         for i in range(len(range_values)):
             process_completion = (i + 1) / len(range_values) * 100
             if (process_completion % 4) == 0:
-                self.monitors[unique_key] = process_completion
+                self.monitors[unique_key] = int(process_completion)
             yield range_values[i]
 
     def launch(self, function, *args):
@@ -41,14 +42,21 @@ class Handle:
         print(compute_core)
         batches = [[arg[i * compute_core: (i + 1) * compute_core] for arg in args] for i in range(0, self.cores)]
         jobs = spawn_jobs(function, batches)
+        self.timer = time.time()
+        duaration = time_this(self.launch_jobs, jobs)
+        print('Completed in', duaration)
+        
+
+    
+    def launch_jobs(self, jobs):
         for i in range(len(jobs)):
             jobs[i].start()
             self.job_ids.append(jobs[i].pid)
-            self.monitors.append(0.0)
+            self.monitors.append(0)
         print('All Job ids:', self.job_ids)
         monitor_process = None
         if self.verbose != 0:
-            monitor_process = Process(target=monitor_jobs, args=(self.monitors, self.verbose,))
+            monitor_process = Process(target=monitor_jobs, args=(self.monitors, self.verbose, self.refresh, self.timer))
             print('Starting Monitor')
             monitor_process.start()
 

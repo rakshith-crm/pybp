@@ -1,0 +1,14 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "core"
+version = "0.0.1"
+authors = [
+    {name="Rakshith C.R.M", email="rakshithcrm@gmail.com"},
+]
+description = "A package that seemlessly allows developers to perform independent batch processing on multiple cores with very little code changes for compatibility, processing speed-up is based on CPU cores"
+readme = "README.md"
+requires-python = ">=3.5"
+

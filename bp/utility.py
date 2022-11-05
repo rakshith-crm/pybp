@@ -7,6 +7,7 @@ box_size = 13
 box = lambda value: '| Proc-%-4s |' % (value,)
 lines = lambda size: '=' * size 
 
+
 def convert(seconds):
     seconds = seconds % (24 * 3600)
     hour = seconds // 3600
@@ -15,11 +16,13 @@ def convert(seconds):
     seconds %= 60
     return "%02d:%02d:%02d" % (hour, minutes, seconds)
 
+
 def time_this(function, *args):
     start_time = time.time()
     function(*args)
     end_time = time.time()
     return convert(end_time - start_time)
+
 
 def tabular_display(values, columns):
     current_column = 0
@@ -35,6 +38,7 @@ def tabular_display(values, columns):
             current_row += 1
     print()
     print(lines( (len(values) % columns)  * box_size))
+
 
 def expected_completion_time(monitor, elapsed):
     mean_completion_percent = sum(monitor) // len(monitor)

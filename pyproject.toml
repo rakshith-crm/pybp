@@ -3,12 +3,52 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "core"
-version = "0.0.1"
+name = "pybp"
 authors = [
     {name="Rakshith C.R.M", email="rakshithcrm@gmail.com"},
 ]
 description = "A package that seemlessly allows developers to perform independent batch processing on multiple cores with very little code changes for compatibility, processing speed-up is based on CPU cores"
 readme = "README.md"
-requires-python = ">=3.5"
+requires-python = ">=3.2"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 
+dependencies = []
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://github.com/rakshith-crm/pybp#readme"
+Issues = "https://github.com/rakshith-crm/pybp/issues"
+Source = "https://github.com/rakshith-crm/pybp"
+
+[tool.hatch.version]
+path = "bp/__about__.py"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+  "pytest-cov",
+]
+[tool.hatch.envs.default.scripts]
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=bp --cov=tests {args}"
+no-cov = "cov --no-cov {args}"
+
+
+[tool.coverage.run]
+branch = true
+parallel = true
+omit = [
+  "bp/__about__.py",
+]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.github",
+  "/docs",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["bp/"]

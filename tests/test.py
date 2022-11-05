@@ -1,30 +1,31 @@
-import os
-import time
-from math import ceil
-from tqdm import tqdm
-import sys
-from core import Handle
+from bp import Handle
 import numpy as np
+import time
 
-handle = Handle(cores=5, verbose=1)
+handle = Handle(cores=5, verbose=2)
 
-box_size = 13
-box = lambda value: '| Proc-%-4s |' % (value,)
-lines = lambda size: '-' * size 
-
-
-def sum_of_array(array):
+def compute_bound_function_bp(array):
     sum_value = 0.0
-    for times in handle.monitor(range(1000000)):
-        sum_value = 0.0
-        for value in array:
-            sum_value += value
+    for times in handle.monitor(range(10000)):
+        for i in range(len(array)):
+            sum_value += array[i]
 
-
+def compute_bound_function_normal(array):
+    sum_value = 0.0
+    start = time.time()
+    for times in range(10000):
+        percent = int((times + 1) / 10000 * 100)
+        elapsed = time.time() - start
+        if percent != 0 and percent % 2 == 0:
+            print(percent, 'Estimated completion in', int((100 - percent) * elapsed / percent), end='\r')
+        for i in range(len(array)):
+            sum_value += array[i]
+    end = time.time()
+    print('Normal Elapsed Time:', (end - start))
 
 if __name__ == '__main__':
-    array1 = np.arange(0, 30)
-    # sum_of_array(array1)
-    handle.launch(sum_of_array, array1)
-    # array2 = np.arange(0, 4+1)
-    # table(array2)
+    array = np.arange(0, 300000)
+
+    handle.launch(compute_bound_function_bp, array)
+
+    compute_bound_function_normal(array)

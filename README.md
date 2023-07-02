@@ -9,4 +9,6 @@ git clone https://github.com/rakshith-crm/core.git
 ```
 
 ### PyPi Installation
+```
 pip install pybp
+```

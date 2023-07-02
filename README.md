@@ -8,7 +8,5 @@ A package that seemlessly allows developers to perform independent batch process
 git clone https://github.com/rakshith-crm/core.git
 ```
 
-### Install Pip Package
-```
-
-```
+### PyPi Installation
+pip install pybp
